@@ -15,10 +15,9 @@ class DogBreedDataset(Dataset):
     def load_annotations(self):
         annotations = []
         for annotation_file in os.listdir(self.annotations_dir):
-            if annotation_file.endswith(".xml"):
-                annotation_path = os.path.join(self.annotations_dir, annotation_file)
-                filename, breed = parse_annotation(annotation_path)
-                annotations.append((filename, breed))
+            annotation_path = os.path.join(self.annotations_dir, annotation_file)
+            filename, breed = parse_annotation(annotation_path)
+            annotations.append((filename, breed))
         return annotations
 
     def __len__(self):
