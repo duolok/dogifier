@@ -5,6 +5,9 @@ import torch.nn as nn
 from torch.optim import lr_scheduler
 from model import model, device
 from data_processing import dataloaders, dataset_sizes
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, module="torchvision")
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)

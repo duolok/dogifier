@@ -4,6 +4,9 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 from xml.etree.ElementTree import parse
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, module="torchvision")
 
 class DogBreedDataset(Dataset):
     def __init__(self, root_dir, transform=None):
@@ -83,5 +86,3 @@ def show_samples(dataset, num_samples=5):
         axes[i].set_title(full_dataset.breeds[label])
         axes[i].axis('off')
     plt.show()
-
-show_samples(train_ds)

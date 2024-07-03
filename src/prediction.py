@@ -1,8 +1,12 @@
 import torch
+import os
 from model import initialize_model
 from data_processing import full_dataset
 import torchvision.transforms as transforms
 from PIL import Image
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, module="torchvision")
 
 num_classes = len(full_dataset.breeds)
 model = initialize_model(num_classes=num_classes)
@@ -36,7 +40,20 @@ def predict_breed(image_path, model, device):
     breed = full_dataset.breeds[preds.item()]
     return breed
 
-image_path = "../../../studyman/ret.jpeg"
-predicted_breed = predict_breed(image_path, model, device)
-print(f'The predicted breed is: {predicted_breed}')
+def get_file_paths(directory):
+    file_paths = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            file_paths.append(os.path.join(root, file))
+    return file_paths
 
+#directory = '../../ziggy/'
+#for path in get_file_paths(directory):
+#    image_path = path
+#    predicted_breed = predict_breed(image_path, model, device)
+#    print(f'PATH: {path} | The predicted breed is: {predicted_breed}') 
+
+path = '../../german_shephard.jpg'
+image_path = path
+predicted_breed = predict_breed(image_path, model, device)
+print(f'PATH: {path} | The predicted breed is: {predicted_breed}') 
