@@ -1,0 +1,96 @@
+package main
+
+import templ "github.com/a-h/templ"
+
+templ.Component("IndexTemplate", func() templ.Component {
+    return templ.Div(func() {
+        templ.Style(func() {
+            templ.Text(`
+                #drop-area {
+                    border: 2px dashed #ccc;
+                    border-radius: 20px;
+                    width: 300px;
+                    height: 200px;
+                    font-family: sans-serif;
+                    margin: 100px auto;
+                    padding: 20px;
+                    text-align: center;
+                }
+            `)
+        })
+        templ.Div(func() {
+            templ.Attr("id", "drop-area")
+            templ.Form(func() {
+                templ.Attr("class", "my-form")
+                templ.P(func() {
+                    templ.Text("Upload multiple files with the file dialog or by dragging and dropping images onto the dashed region")
+                })
+                templ.Input(func() {
+                    templ.Attr("type", "file")
+                    templ.Attr("id", "fileElem")
+                    templ.Attr("multiple", true)
+                    templ.Attr("accept", "image/*")
+                    templ.Attr("onchange", "handleFiles(this.files)")
+                })
+                templ.Label(func() {
+                    templ.Attr("class", "button")
+                    templ.Attr("for", "fileElem")
+                    templ.Text("Select some files")
+                })
+            })
+            templ.Progress(func() {
+                templ.Attr("id", "progress-bar")
+                templ.Attr("max", 100)
+                templ.Attr("value", 0)
+            })
+            templ.Div(func() {
+                templ.Attr("id", "gallery")
+            })
+        })
+        templ.Script(func() {
+            templ.Text(`
+                let dropArea = document.getElementById('drop-area')
+
+                ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, preventDefaults, false)
+                })
+
+                function preventDefaults (e) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                }
+
+                dropArea.addEventListener('drop', handleDrop, false)
+
+                function handleDrop(e) {
+                    let dt = e.dataTransfer
+                    let files = dt.files
+
+                    handleFiles(files)
+                }
+
+                function handleFiles(files) {
+                    ([...files]).forEach(uploadFile)
+                }
+
+                function uploadFile(file) {
+                    let url = '/upload'
+                    let formData = new FormData()
+
+                    formData.append('file', file)
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => response.text())
+                      .then(data => {
+                        console.log(data)
+                        document.getElementById('gallery').innerHTML += `<p>${data}</p>`
+                      })
+                      .catch(() => { alert('Upload failed') })
+                }
+            `)
+        })
+    })
+})
+
